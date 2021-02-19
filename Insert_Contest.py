@@ -22,20 +22,26 @@ class Contest:
     self.num_question = num_question
 
 def insert_contest(spreadsheet , sheet_id , contest):
+  
   requests = []
-  requests.append(insert_rows(sheet_id,contest.num_question))
-  requests.append(merge_columns(sheet_id,0,0,contest.num_question,4))
-  requests.append(add_hyperlink(sheet_id,0,0,contest.name,contest.link))
+  
+  requests.append(insert_rows(sheet_id,4,4+contest.num_question))
+  requests.append(merge_columns(sheet_id,4,0,4+contest.num_question,4))
+  
+  requests.append(add_hyperlink(sheet_id,4,0,contest.name,contest.link))
   if contest.editorial_link != "":
-    requests.append(add_hyperlink(sheet_id,0,1,"Editorial",contest.editorial_link))
-  requests.append(add_condition_rule(sheet_id,0,5,contest.num_question,5+num_usuarios))
-  requests.append(add_value(sheet_id,0,2,contest.code))
-  requests.append(add_value(sheet_id,0,3,contest.date))
-  requests.append(centralize_cells(sheet_id,0,0,contest.num_question,5+num_usuarios))
-  requests.append(border_all_cells(sheet_id,0,0,contest.num_question,5+num_usuarios))
-  requests.append(add_condition_rule(sheet_id,0,5,contest.num_question,5+num_usuarios))
+    requests.append(add_hyperlink(sheet_id,4,1,"Editorial",contest.editorial_link))
+  
+  requests.append(add_value(sheet_id,4,2,contest.code))
+  requests.append(add_value(sheet_id,4,3,contest.date))
   for i in range(0,contest.num_question):
-    requests.append(add_value(sheet_id,i,4,chr(65+i)))
+    requests.append(add_value(sheet_id,4+i,4,chr(65+i)))
+
+  requests.append(centralize_cells(sheet_id,4,0,4+contest.num_question,5+num_usuarios))
+  requests.append(border_all_cells(sheet_id,4,0,4+contest.num_question,5+num_usuarios))
+
+  requests.append(change_color(sheet_id,4,0,4+contest.num_question,2,0,0,0))
+
   body = {"requests":requests}
   spreadsheet.batchUpdate(spreadsheetId=SAMPLE_SPREADSHEET_ID, body=body).execute()
 
