@@ -17,7 +17,7 @@ def insert_rows(sheet_id , start_index , num):
   }
   return request_body
 
-#Funde as colunas
+#Junta as linhas
 #Num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
 def merge_columns(sheet_id , pos1 , pos2 , pos3 , pos4):
   request_body = {
@@ -30,6 +30,23 @@ def merge_columns(sheet_id , pos1 , pos2 , pos3 , pos4):
         "endColumnIndex": pos4
       },
       "mergeType": "MERGE_COLUMNS"
+    }
+  }
+  return request_body
+
+#Junta as colunas
+#Num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+def merge_rows(sheet_id , pos1 , pos2 , pos3 , pos4):
+  request_body = {
+    "mergeCells": {
+      "range": {
+        "sheetId": sheet_id,
+        "startRowIndex": pos1,
+        "endRowIndex": pos3,
+        "startColumnIndex": pos2,
+        "endColumnIndex": pos4
+      },
+      "mergeType": "MERGE_ROWS"
     }
   }
   return request_body
@@ -244,3 +261,66 @@ def add_condition_rule2(sheet_id , pos1 , pos2 , pos3 , pos4):
     }
   }
   return request_body
+
+#Altera o tamanho das colunas comecando na posicao "startIndex" e temrinando na posicao
+#endIndex para size
+def change_size_column(sheet_id , startIndex , endIndex , size):
+  request_body = {
+    "updateDimensionProperties": {
+       "range": {
+         "sheetId": sheet_id,
+         "dimension": "COLUMNS",
+         "startIndex": startIndex,
+         "endIndex": endIndex
+       },
+       "properties": {
+         "pixelSize": size
+       },
+       "fields": "pixelSize"
+    }
+  }
+  return request_body
+
+#Altera o tamanho das linhas comecando na posicao "startIndex" e temrinando na posicao
+#endIndex para size
+def change_size_row(sheet_id , startIndex , endIndex , size):
+  request_body = {
+    "updateDimensionProperties": {
+       "range": {
+         "sheetId": sheet_id,
+         "dimension": "ROWS",
+         "startIndex": startIndex,
+         "endIndex": endIndex
+       },
+       "properties": {
+         "pixelSize": size
+       },
+       "fields": "pixelSize"
+    }
+  }
+  return request_body
+
+#Altera o texto para ficar em negrito
+#Num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+def bold_cells(sheet_id , pos1 , pos2 , pos3 , pos4):
+  request_body = {
+    "repeatCell": {
+      "range":{
+        "sheetId": sheet_id,
+        "startRowIndex": pos1,
+        "endRowIndex": pos3,
+        "startColumnIndex": pos2,
+        "endColumnIndex": pos4
+      },
+      "cell": {
+        "userEnteredFormat": {
+          "textFormat": {
+            "bold" : True
+          }
+        }
+      },
+      "fields": "userEnteredFormat.textFormat"
+    }
+  }
+  return request_body
+
