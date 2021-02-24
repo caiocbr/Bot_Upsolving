@@ -1,30 +1,34 @@
 from google_sheets_constants import*
 
-# ID de coluna (começando por 0) -> notação A1 (até ZZ)
 def int_to_column(id):
+    ''' Pega uma ID de coluna (começando por 0)
+        Retorna a coluna na notação A1 (até ZZ) '''
     if id < 26:
         return chr(ord('A') + id)
     else:
         return chr(ord('A') + int(id / 26) - 1) + chr(ord('A') + id - int(id / 26) * 26)
 
 
-# Range na notação "p1!A1:ZZ2"
-def get_cells(sheet, SAMPLE_SPREADSHEET_ID, range):
+def get_cells(sheet, sample_spread_sheet_id, range):
+    ''' Pega a ID da tabela e o range na notação "p1!A1:ZZ2" 
+        Retorna uma matriz das células desse range '''
     request = sheet.values().get(
-        spreadsheetId = SAMPLE_SPREADSHEET_ID,
+        spreadsheetId = sample_spread_sheet_id,
         range = range
     ).execute()
-    return request.get('values',[])
+    return request.get('values', [])
 
 
-def get_user_column(sheet, SAMPLE_SPREADSHEET_ID, user_name):
+def get_user_column_id(sheet, sample_spread_sheet_id, user_name):
+    ''' Pega a ID da tabela e o nome do usuário
+        Retorna a ID da coluna do usuário ou None caso não seja encontrado '''
     users = get_cells(sheet,
-        SAMPLE_SPREADSHEET_ID, 
-        Upsolving_tab_name + "!" 
-        + int_to_column(Users_start_column_id) + str(Users_row) + ":" 
-        + int_to_column(Users_end_column_id) + str(Users_row)
+        sample_spread_sheet_id, 
+        UPSOLVING_TAB_NAME + "!" 
+        + int_to_column(USERS_START_COLUMN_ID) + str(USERS_ROW) + ":" 
+        + int_to_column(USERS_END_COLUMN_ID) + str(USERS_ROW)
     )
-    column = Users_start_column_id
+    column = USERS_START_COLUMN_ID
     user_column = None
 
     for i in users:
@@ -36,14 +40,16 @@ def get_user_column(sheet, SAMPLE_SPREADSHEET_ID, user_name):
     return user_column
 
 
-def get_contest_first_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
+def get_contest_first_row(sheet, sample_spread_sheet_id, contest_name):
+    ''' Pega a ID da tabela e o nome da prova
+        Retorna a primeira linha da prova ou None caso não seja encontrada '''
     contests = get_cells(sheet, 
-        SAMPLE_SPREADSHEET_ID, 
-        Upsolving_tab_name + "!"
-        + Contests_column + str(Problems_start_row) + ":"
-        + Contests_column + str(Problems_end_row)
+        sample_spread_sheet_id, 
+        UPSOLVING_TAB_NAME + "!"
+        + CONTESTS_COLUMN + str(PROBLEMS_START_ROW) + ":"
+        + CONTESTS_COLUMN + str(PROBLEMS_END_ROW)
     )
-    row = Problems_start_row
+    row = PROBLEMS_START_ROW
     contest_first_row = None
     
     for i in contests:
@@ -55,14 +61,16 @@ def get_contest_first_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
     return contest_first_row
 
 
-def get_contest_last_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
+def get_contest_last_row(sheet, sample_spread_sheet_id, contest_name):
+    ''' Pega a ID da tabela e o nome da prova
+        Retorna a última linha da prova ou None caso não seja encontrada '''
     contests = get_cells(sheet, 
-        SAMPLE_SPREADSHEET_ID,
-        Upsolving_tab_name + "!" 
-        + Contests_column + str(Problems_start_row) + ":"
-        + Contests_column + str(Problems_end_row)
+        sample_spread_sheet_id,
+        UPSOLVING_TAB_NAME + "!" 
+        + CONTESTS_COLUMN + str(PROBLEMS_START_ROW) + ":"
+        + CONTESTS_COLUMN + str(PROBLEMS_END_ROW)
     )
-    row = Problems_start_row
+    row = PROBLEMS_START_ROW
     aux = False
     contest_last_row = None
     
@@ -71,21 +79,26 @@ def get_contest_last_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
             if j == contest_name:
                 aux = True
             elif aux:
-                contest_last_row = row
+                contest_last_row = row - 1
                 break
         if contest_last_row != None:
             break
         row = row + 1
+    
+    if aux and (contest_last_row == None):
+        contest_last_row = PROBLEMS_END_ROW
 
     return contest_last_row
 
 
-def get_problem_row(sheet, SAMPLE_SPREADSHEET_ID, contest_first_row, contest_last_row, problem_name):
+def get_problem_row(sheet, sample_spread_sheet_id, contest_first_row, contest_last_row, problem_name):
+    ''' Pega a ID da tabela, a primeira linha da prova, a última linha da prova e o nome da questão
+        Retorna a linha da questão ou None caso não seja encontrada '''
     problems = get_cells(sheet, 
-        SAMPLE_SPREADSHEET_ID, 
-        Upsolving_tab_name + "!" 
-        + Problems_column + str(contest_first_row) + ":" 
-        + Problems_column + str(contest_last_row-1)
+        sample_spread_sheet_id, 
+        UPSOLVING_TAB_NAME + "!" 
+        + PROBLEMS_COLUMN + str(contest_first_row) + ":" 
+        + PROBLEMS_COLUMN + str(contest_last_row)
     )
     row = contest_first_row
     problem_row = None

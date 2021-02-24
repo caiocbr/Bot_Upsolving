@@ -1,7 +1,7 @@
 from google_sheets_utilities import*
 
 def mark_problem(sheet, SAMPLE_SPREADSHEET_ID, user_name, contest_name, problem_name):
-    user_column = get_user_column(sheet, SAMPLE_SPREADSHEET_ID, user_name)
+    user_column = get_user_column_id(sheet, SAMPLE_SPREADSHEET_ID, user_name)
     if user_column == None:
         print("user not found")
 
