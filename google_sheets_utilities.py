@@ -1,3 +1,5 @@
+from google_sheets_constants import*
+
 # ID de coluna (começando por 0) -> notação A1 (até ZZ)
 def int_to_column(id):
     if id < 26:
@@ -5,6 +7,8 @@ def int_to_column(id):
     else:
         return chr(ord('A') + int(id / 26) - 1) + chr(ord('A') + id - int(id / 26) * 26)
 
+
+# Range na notação "p1!A1:ZZ2"
 def get_cells(sheet, SAMPLE_SPREADSHEET_ID, range):
     request = sheet.values().get(
         spreadsheetId = SAMPLE_SPREADSHEET_ID,
@@ -12,10 +16,16 @@ def get_cells(sheet, SAMPLE_SPREADSHEET_ID, range):
     ).execute()
     return request.get('values',[])
 
+
 def get_user_column(sheet, SAMPLE_SPREADSHEET_ID, user_name):
-    users = get_cells(sheet, SAMPLE_SPREADSHEET_ID, "p1!H2:ZZ2")
-    column = 7
-    user_column = 1000
+    users = get_cells(sheet,
+        SAMPLE_SPREADSHEET_ID, 
+        Upsolving_tab_name + "!" 
+        + int_to_column(Users_start_column_id) + str(Users_row) + ":" 
+        + int_to_column(Users_end_column_id) + str(Users_row)
+    )
+    column = Users_start_column_id
+    user_column = None
 
     for i in users:
         for j in i:
@@ -25,10 +35,16 @@ def get_user_column(sheet, SAMPLE_SPREADSHEET_ID, user_name):
     
     return user_column
 
+
 def get_contest_first_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
-    contests = get_cells(sheet, SAMPLE_SPREADSHEET_ID, "p1!A4:A5000")
-    row = 4
-    contest_first_row = 5000
+    contests = get_cells(sheet, 
+        SAMPLE_SPREADSHEET_ID, 
+        Upsolving_tab_name + "!"
+        + Contests_column + str(Problems_start_row) + ":"
+        + Contests_column + str(Problems_end_row)
+    )
+    row = Problems_start_row
+    contest_first_row = None
     
     for i in contests:
         for j in i:
@@ -38,11 +54,17 @@ def get_contest_first_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
 
     return contest_first_row
 
+
 def get_contest_last_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
-    contests = get_cells(sheet, SAMPLE_SPREADSHEET_ID, "p1!A4:A5000")
-    row = 4
+    contests = get_cells(sheet, 
+        SAMPLE_SPREADSHEET_ID,
+        Upsolving_tab_name + "!" 
+        + Contests_column + str(Problems_start_row) + ":"
+        + Contests_column + str(Problems_end_row)
+    )
+    row = Problems_start_row
     aux = False
-    contest_last_row = 5000
+    contest_last_row = None
     
     for i in contests:
         for j in i:
@@ -51,19 +73,22 @@ def get_contest_last_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
             elif aux:
                 contest_last_row = row
                 break
-        if contest_last_row < 5000:
+        if contest_last_row != None:
             break
         row = row + 1
 
     return contest_last_row
 
+
 def get_problem_row(sheet, SAMPLE_SPREADSHEET_ID, contest_first_row, contest_last_row, problem_name):
     problems = get_cells(sheet, 
         SAMPLE_SPREADSHEET_ID, 
-        "p1!G" + str(contest_first_row) + ":G" + str(contest_last_row-1)
+        Upsolving_tab_name + "!" 
+        + Problems_column + str(contest_first_row) + ":" 
+        + Problems_column + str(contest_last_row-1)
     )
     row = contest_first_row
-    problem_row = 5000
+    problem_row = None
 
     for i in problems:
         for j in i:
