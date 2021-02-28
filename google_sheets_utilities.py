@@ -22,11 +22,12 @@ def get_cells(sheet, sample_spread_sheet_id, range):
 def get_user_column_id(sheet, sample_spread_sheet_id, user_name):
     ''' Pega a ID da tabela e o nome do usuário
         Retorna a ID da coluna do usuário ou None caso não seja encontrado '''
+    range = (UPSOLVING_TAB_NAME + "!" 
+        + int_to_column(USERS_START_COLUMN_ID) + str(USERS_ROW) + ":" 
+        + int_to_column(USERS_END_COLUMN_ID) + str(USERS_ROW))
     users = get_cells(sheet,
         sample_spread_sheet_id, 
-        UPSOLVING_TAB_NAME + "!" 
-        + int_to_column(USERS_START_COLUMN_ID) + str(USERS_ROW) + ":" 
-        + int_to_column(USERS_END_COLUMN_ID) + str(USERS_ROW)
+        range
     )
     column = USERS_START_COLUMN_ID
     user_column = None
@@ -43,11 +44,12 @@ def get_user_column_id(sheet, sample_spread_sheet_id, user_name):
 def get_contest_first_row(sheet, sample_spread_sheet_id, contest_name):
     ''' Pega a ID da tabela e o nome da prova
         Retorna a primeira linha da prova ou None caso não seja encontrada '''
+    range = (UPSOLVING_TAB_NAME + "!"
+        + CONTESTS_COLUMN + str(PROBLEMS_START_ROW) + ":"
+        + CONTESTS_COLUMN + str(PROBLEMS_END_ROW))
     contests = get_cells(sheet, 
         sample_spread_sheet_id, 
-        UPSOLVING_TAB_NAME + "!"
-        + CONTESTS_COLUMN + str(PROBLEMS_START_ROW) + ":"
-        + CONTESTS_COLUMN + str(PROBLEMS_END_ROW)
+        range
     )
     row = PROBLEMS_START_ROW
     contest_first_row = None
@@ -64,11 +66,12 @@ def get_contest_first_row(sheet, sample_spread_sheet_id, contest_name):
 def get_contest_last_row(sheet, sample_spread_sheet_id, contest_name):
     ''' Pega a ID da tabela e o nome da prova
         Retorna a última linha da prova ou None caso não seja encontrada '''
+    range = (UPSOLVING_TAB_NAME + "!" 
+        + CONTESTS_COLUMN + str(PROBLEMS_START_ROW) + ":"
+        + CONTESTS_COLUMN + str(PROBLEMS_END_ROW))
     contests = get_cells(sheet, 
         sample_spread_sheet_id,
-        UPSOLVING_TAB_NAME + "!" 
-        + CONTESTS_COLUMN + str(PROBLEMS_START_ROW) + ":"
-        + CONTESTS_COLUMN + str(PROBLEMS_END_ROW)
+        range
     )
     row = PROBLEMS_START_ROW
     aux = False
@@ -94,11 +97,12 @@ def get_contest_last_row(sheet, sample_spread_sheet_id, contest_name):
 def get_problem_row(sheet, sample_spread_sheet_id, contest_first_row, contest_last_row, problem_name):
     ''' Pega a ID da tabela, a primeira linha da prova, a última linha da prova e o nome da questão
         Retorna a linha da questão ou None caso não seja encontrada '''
+    range = (UPSOLVING_TAB_NAME + "!" 
+        + PROBLEMS_COLUMN + str(contest_first_row) + ":" 
+        + PROBLEMS_COLUMN + str(contest_last_row))
     problems = get_cells(sheet, 
         sample_spread_sheet_id, 
-        UPSOLVING_TAB_NAME + "!" 
-        + PROBLEMS_COLUMN + str(contest_first_row) + ":" 
-        + PROBLEMS_COLUMN + str(contest_last_row)
+        range
     )
     row = contest_first_row
     problem_row = None
