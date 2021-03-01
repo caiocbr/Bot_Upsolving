@@ -1,78 +1,3 @@
-# ID de coluna (comecando por 0) -> notacao A1 (ate ZZ)
-def int_to_column(id):
-    if id < 26:
-        return chr(ord('A') + id)
-    else:
-        return chr(ord('A') + int(id / 26) - 1) + chr(ord('A') + id - int(id / 26) * 26)
-
-def get_cells(sheet, SAMPLE_SPREADSHEET_ID, range):
-    request = sheet.values().get(
-        spreadsheetId = SAMPLE_SPREADSHEET_ID,
-        range = range
-    ).execute()
-    return request.get('values',[])
-
-def get_user_column(sheet, SAMPLE_SPREADSHEET_ID, user_name):
-    users = get_cells(sheet, SAMPLE_SPREADSHEET_ID, "p1!H2:ZZ2")
-    column = 7
-    user_column = 1000
-
-    for i in users:
-        for j in i:
-            if j == user_name:
-                user_column = column
-            column = column + 1
-    
-    return user_column
-
-def get_contest_first_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
-    contests = get_cells(sheet, SAMPLE_SPREADSHEET_ID, "p1!A4:A5000")
-    row = 4
-    contest_first_row = 5000
-    
-    for i in contests:
-        for j in i:
-            if j == contest_name:
-                contest_first_row = row
-        row = row + 1
-
-    return contest_first_row
-
-def get_contest_last_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name):
-    contests = get_cells(sheet, SAMPLE_SPREADSHEET_ID, "p1!A4:A5000")
-    row = 4
-    aux = False
-    contest_last_row = 5000
-    
-    for i in contests:
-        for j in i:
-            if j == contest_name:
-                aux = True
-            elif aux:
-                contest_last_row = row
-                break
-        if contest_last_row < 5000:
-            break
-        row = row + 1
-
-    return contest_last_row
-
-def get_problem_row(sheet, SAMPLE_SPREADSHEET_ID, contest_first_row, contest_last_row, problem_name):
-    problems = get_cells(sheet, 
-        SAMPLE_SPREADSHEET_ID, 
-        "p1!G" + str(contest_first_row) + ":G" + str(contest_last_row-1)
-    )
-    row = contest_first_row
-    problem_row = 5000
-
-    for i in problems:
-        for j in i:
-            if j == problem_name:
-                problem_row = row
-        row = row + 1
-    
-    return problem_row
-
 # Todas as funcoes apenas compoem um request, apos usa-las e necessarios executar
 # a seguinte linha de codigo para que as alteracoes sejam aplicadas:
 # requests.append(func)
@@ -110,7 +35,7 @@ def merge_columns(sheet_id , startRowIndex , startColumnIndex , endRowIndex , en
     return request_body
 
 # Junta as colunas
-# num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+# num grid com o canto superior esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
 def merge_rows(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endColumnIndex):
     request_body = {
         "mergeCells": {
@@ -127,7 +52,7 @@ def merge_rows(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endCo
     return request_body
 
 # Centraliza o texto 
-# num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+# num grid com o canto superior esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
 def centralize_cells(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endColumnIndex):
     request_body = {
         "repeatCell":
@@ -153,7 +78,7 @@ def centralize_cells(sheet_id , startRowIndex , startColumnIndex , endRowIndex ,
     }
     return request_body
 
-# Adiciona um texto(name) e uma url(url) na celula (pos1,pos2)
+# Adiciona um texto(name) e uma url(url) na celula (rowIndex,columnIndex)
 def add_hyperlink(sheet_id , rowIndex , columnIndex , name , url):
     request_body = {
         "updateCells": 
@@ -177,7 +102,7 @@ def add_hyperlink(sheet_id , rowIndex , columnIndex , name , url):
     }
     return request_body
 
-# Escreve "value" na celula (pos1,pos2)
+# Escreve "value" na celula (rowIndex,columnIndex)
 def add_value(sheet_id , rowIndex , columnIndex , value):
     request_body = {
         "updateCells": 
@@ -186,7 +111,7 @@ def add_value(sheet_id , rowIndex , columnIndex , value):
             {
                 "values": {
                     "userEnteredValue": {
-                        "stringValue":value
+                        "stringValue": value
                     }
                 }
             },
@@ -201,7 +126,7 @@ def add_value(sheet_id , rowIndex , columnIndex , value):
     return request_body
 
 # Realca apenas as bordas externas
-# num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+# num grid com o canto superior esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
 def border_cell(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endColumnIndex):
     request_body = {
         "updateBorders": {
@@ -221,7 +146,7 @@ def border_cell(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endC
     return request_body
 
 # Realca todas as bordas
-# num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+# num grid com o canto superior esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
 def border_all_cells(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endColumnIndex):
     request_body = {
         "repeatCell": {
@@ -248,7 +173,7 @@ def border_all_cells(sheet_id , startRowIndex , startColumnIndex , endRowIndex ,
     return request_body
 
 # Muda a cor do texto
-# num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+# num grid com o canto superior esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
 # para o sistema rgb,com cada parametro variando de [0,1]
 def change_color(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endColumnIndex , red , green , blue):
     request_body = {
@@ -277,7 +202,7 @@ def change_color(sheet_id , startRowIndex , startColumnIndex , endRowIndex , end
     return request_body
 
 # Add a regra de deixar vermelho se estiver em branco
-# num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+# num grid com o canto superior esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
 def add_condition_rule1(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endColumnIndex):
     request_body = {
         "addConditionalFormatRule": {
@@ -306,7 +231,7 @@ def add_condition_rule1(sheet_id , startRowIndex , startColumnIndex , endRowInde
     return request_body
 
 # Add a regra de deixar verde se nao estiver vazio
-# num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+# num grid com o canto superior esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
 def add_condition_rule2(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endColumnIndex):
     request_body = {
         "addConditionalFormatRule": {
@@ -373,7 +298,7 @@ def change_size_row(sheet_id , startIndex , endIndex , size):
     return request_body
 
 # Altera o texto para ficar em negrito
-# num grid com o canto superior esquerdo em (pos1,pos2) e canto inferior direito em (pos3,pos4)
+# num grid com o canto superior esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
 def bold_cells(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endColumnIndex):
     request_body = {
         "repeatCell": {
@@ -392,6 +317,29 @@ def bold_cells(sheet_id , startRowIndex , startColumnIndex , endRowIndex , endCo
                 }
             },
             "fields": "userEnteredFormat.textFormat"
+        }
+    }
+    return request_body
+
+# Adiciona uma formula na celula de posicao (rowIndex,columnIndex) com o valor "value"
+def add_formula_value(sheet_id , rowIndex , columnIndex , value):
+    request_body = {
+        "updateCells": 
+        {
+            "rows": 
+            {
+                "values": {
+                    "userEnteredValue" : {
+                        "formulaValue" : value
+                    }
+                }
+            },
+            "fields": "userEnteredValue",
+            "start": {
+                "sheetId": sheet_id,
+                "rowIndex": rowIndex,
+                "columnIndex": columnIndex 
+            }
         }
     }
     return request_body
