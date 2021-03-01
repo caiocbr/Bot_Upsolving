@@ -1,19 +1,20 @@
 from google_sheets_utilities import*
+from google_sheets_constants import*
 
-def mark_problem(sheet, SAMPLE_SPREADSHEET_ID, user_name, contest_name, problem_name):
-    user_column = get_user_column_id(sheet, SAMPLE_SPREADSHEET_ID, user_name)
+def mark_problem(sheet, sample_spread_sheet_id, user_name, contest_name, problem_name):
+    user_column = get_user_column_id(sheet, sample_spread_sheet_id, user_name)
     if user_column == None:
         print("user not found")
 
     else:
-        contest_first_row = get_contest_first_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name)
-        contest_last_row = get_contest_last_row(sheet, SAMPLE_SPREADSHEET_ID, contest_name)
+        contest_first_row = get_contest_first_row(sheet, sample_spread_sheet_id, contest_name)
+        contest_last_row = get_contest_last_row(sheet, sample_spread_sheet_id, contest_name)
         if contest_first_row == None:
             print("contest not found")
 
         else:
             problem_row = get_problem_row(sheet, 
-                SAMPLE_SPREADSHEET_ID, 
+                sample_spread_sheet_id, 
                 contest_first_row, 
                 contest_last_row,
                 problem_name
@@ -22,8 +23,8 @@ def mark_problem(sheet, SAMPLE_SPREADSHEET_ID, user_name, contest_name, problem_
                 print("problem not found")
                 
             else:
-                request_upd = sheet.values().update(
-                    spreadsheetId = SAMPLE_SPREADSHEET_ID, 
+                sheet.values().update(
+                    spreadsheetId = sample_spread_sheet_id, 
                     range = UPSOLVING_TAB_NAME + "!" + int_to_column(user_column) + str(problem_row), 
                     valueInputOption = "USER_ENTERED", 
                     body = {"values":[['X']]}
