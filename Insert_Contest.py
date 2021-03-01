@@ -42,6 +42,11 @@ def insert_contest(spreadsheet , sheet_id , contest):
 
     requests.append(change_color(sheet_id,4,0,4+contest.num_question,2,0,0,0))
 
+    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                                range="p1!H4:H4").execute()
+    values = result.get('values', [])
+    print(values)
+
     string = '=CONT.SE(H5:H15;)'
     requests.append(add_formula_value(sheet_id,3,7,string))
 
