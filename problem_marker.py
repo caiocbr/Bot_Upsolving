@@ -24,7 +24,7 @@ def mark_problem(sheet, SAMPLE_SPREADSHEET_ID, user_name, contest_name, problem_
             else:
                 request_upd = sheet.values().update(
                     spreadsheetId = SAMPLE_SPREADSHEET_ID, 
-                    range = "p1!" + int_to_column(user_column) + str(problem_row), 
+                    range = UPSOLVING_TAB_NAME + "!" + int_to_column(user_column) + str(problem_row), 
                     valueInputOption = "USER_ENTERED", 
                     body = {"values":[['X']]}
                 ).execute()
