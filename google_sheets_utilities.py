@@ -3,30 +3,33 @@ from google_sheets_constants import*
 def int_to_column(id):
     ''' Pega uma ID de coluna (começando por 0)
         Retorna a coluna na notação A1 (até ZZ) '''
+
     if id < 26:
         return chr(ord('A') + id)
     else:
         return chr(ord('A') + int(id / 26) - 1) + chr(ord('A') + id - int(id / 26) * 26)
 
 
-def get_cells(sheet, sample_spread_sheet_id, range):
+def get_cells(sheet, spread_sheet_id, range):
     ''' Pega a ID da planilha e o range na notação "p1!A1:ZZ2" 
         Retorna uma matriz das células desse range '''
+
     request = sheet.values().get(
-        spreadsheetId = sample_spread_sheet_id,
+        spreadsheetId = spread_sheet_id,
         range = range
     ).execute()
     return request.get('values', [])
 
 
-def get_users_end_column_id(sheet, sample_spread_sheet_id):
+def get_users_end_column_id(sheet, spread_sheet_id):
     ''' Pega a ID da planilha e retorna a ID da última coluna de usários '''
+
     range = (
         METADATA_TAB_NAME + "!"
         + int_to_column(USERS_QUANTITY_COLUMN_ID) + str(USERS_QUANTITY_ROW) + ":"
         + int_to_column(USERS_QUANTITY_COLUMN_ID) + str(USERS_QUANTITY_ROW)
     )
-    users_quantity = get_cells(sheet, sample_spread_sheet_id, range)
+    users_quantity = get_cells(sheet, spread_sheet_id, range)
     users_end_column_id = 0
     for i in users_quantity:
         for j in i:
@@ -34,14 +37,15 @@ def get_users_end_column_id(sheet, sample_spread_sheet_id):
     return users_end_column_id
 
 
-def get_problems_end_row(sheet, sample_spread_sheet_id):
+def get_problems_end_row(sheet, spread_sheet_id):
     ''' Pega a ID da planilha e retorna a última linha de problemas '''
+
     range = (
         METADATA_TAB_NAME + "!"
         + int_to_column(PROBLEMS_QUANTITY_COLUMN_ID) + str(PROBLEMS_QUANTITY_ROW) + ":"
         + int_to_column(PROBLEMS_QUANTITY_COLUMN_ID) + str(PROBLEMS_QUANTITY_ROW)
     )
-    problems_quantity = get_cells(sheet, sample_spread_sheet_id, range)
+    problems_quantity = get_cells(sheet, spread_sheet_id, range)
     problems_end_row = 0
     for i in problems_quantity:
         for j in i:
@@ -49,15 +53,16 @@ def get_problems_end_row(sheet, sample_spread_sheet_id):
     return problems_end_row
 
 
-def get_user_column_id(sheet, sample_spread_sheet_id, user_name):
+def get_user_column_id(sheet, spread_sheet_id, user_name):
     ''' Pega a ID da planilha e o nome do usuário
         Retorna a ID da coluna do usuário ou None caso não seja encontrado '''
-    users_end_column_id = get_users_end_column_id(sheet, sample_spread_sheet_id)
+
+    users_end_column_id = get_users_end_column_id(sheet, spread_sheet_id)
     range = (UPSOLVING_TAB_NAME + "!" 
         + int_to_column(USERS_START_COLUMN_ID) + str(USERS_ROW) + ":" 
         + int_to_column(users_end_column_id) + str(USERS_ROW))
     users = get_cells(sheet,
-        sample_spread_sheet_id, 
+        spread_sheet_id, 
         range
     )
     column = USERS_START_COLUMN_ID
@@ -72,15 +77,16 @@ def get_user_column_id(sheet, sample_spread_sheet_id, user_name):
     return user_column
 
 
-def get_contest_first_row(sheet, sample_spread_sheet_id, contest_name):
+def get_contest_first_row(sheet, spread_sheet_id, contest_name):
     ''' Pega a ID da planilha e o nome da prova
         Retorna a primeira linha da prova ou None caso não seja encontrada '''
-    problems_end_row = get_problems_end_row(sheet, sample_spread_sheet_id)
+
+    problems_end_row = get_problems_end_row(sheet, spread_sheet_id)
     range = (UPSOLVING_TAB_NAME + "!"
         + CONTESTS_COLUMN + str(PROBLEMS_START_ROW) + ":"
         + CONTESTS_COLUMN + str(problems_end_row))
     contests = get_cells(sheet, 
-        sample_spread_sheet_id, 
+        spread_sheet_id, 
         range
     )
     row = PROBLEMS_START_ROW
@@ -95,15 +101,16 @@ def get_contest_first_row(sheet, sample_spread_sheet_id, contest_name):
     return contest_first_row
 
 
-def get_contest_last_row(sheet, sample_spread_sheet_id, contest_name):
+def get_contest_last_row(sheet, spread_sheet_id, contest_name):
     ''' Pega a ID da planilha e o nome da prova
         Retorna a última linha da prova ou None caso não seja encontrada '''
-    problems_end_row = get_problems_end_row(sheet, sample_spread_sheet_id)
+
+    problems_end_row = get_problems_end_row(sheet, spread_sheet_id)
     range = (UPSOLVING_TAB_NAME + "!" 
         + CONTESTS_COLUMN + str(PROBLEMS_START_ROW) + ":"
         + CONTESTS_COLUMN + str(problems_end_row))
     contests = get_cells(sheet, 
-        sample_spread_sheet_id,
+        spread_sheet_id,
         range
     )
     row = PROBLEMS_START_ROW
@@ -127,14 +134,15 @@ def get_contest_last_row(sheet, sample_spread_sheet_id, contest_name):
     return contest_last_row
 
 
-def get_problem_row(sheet, sample_spread_sheet_id, contest_first_row, contest_last_row, problem_name):
+def get_problem_row(sheet, spread_sheet_id, contest_first_row, contest_last_row, problem_name):
     ''' Pega a ID da planilha, a primeira linha da prova, a última linha da prova e o nome da questão
         Retorna a linha da questão ou None caso não seja encontrada '''
+
     range = (UPSOLVING_TAB_NAME + "!" 
         + PROBLEMS_COLUMN + str(contest_first_row) + ":" 
         + PROBLEMS_COLUMN + str(contest_last_row))
     problems = get_cells(sheet, 
-        sample_spread_sheet_id, 
+        spread_sheet_id, 
         range
     )
     row = contest_first_row
@@ -149,11 +157,12 @@ def get_problem_row(sheet, sample_spread_sheet_id, contest_first_row, contest_la
     return problem_row
 
 
-def insert_columns(sheet, sample_spread_sheet_id, tab_id , start_column_id , column_quantity):
+def insert_columns(sheet, spread_sheet_id, tab_id , start_column_id , column_quantity):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a ID da coluna onde começará a inserção e a quantidade de colunas que quer-se inserir
         A ID da aba esta no final do URL, logo depois do 'gid='
         Insere colunas vazias '''
+
     request = {
         "insertDimension": {
             "range": {
@@ -165,13 +174,14 @@ def insert_columns(sheet, sample_spread_sheet_id, tab_id , start_column_id , col
         }
     }
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()
 
 
-def delete_columns(sheet, sample_spread_sheet_id, tab_id , start_column_id , column_quantity):
+def delete_columns(sheet, spread_sheet_id, tab_id , start_column_id , column_quantity):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a ID da coluna onde começará a deleção e a quantidade de colunas que quer-se deletar
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     request = {
         "deleteDimension": {
             "range": {
@@ -183,15 +193,16 @@ def delete_columns(sheet, sample_spread_sheet_id, tab_id , start_column_id , col
         }
     }
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()
 
 
-def problems_pattern_format(sheet, sample_spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id):
+def format_problem_cells(sheet, spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a linha e a ID da coluna onde começará a formatação 
         e a linha e a ID da coluna onde terminará a formatação no padrão dos problemas
         Vermelho se tiver vazio, Verde se tiver preenchido por X e Branco caso contrário
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     request = []
     start_row = start_row - 1
     end_column_id = end_column_id + 1
@@ -253,15 +264,16 @@ def problems_pattern_format(sheet, sample_spread_sheet_id, tab_id, start_row, st
     }
     request.append(request_body)
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()
 
 
-def change_column_size(sheet, sample_spread_sheet_id, tab_id, start_column_id, column_quantity, size):
+def change_column_size(sheet, spread_sheet_id, tab_id, start_column_id, column_quantity, size):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a ID da coluna onde começará a formatação, a quantidade de colunas a serem formatadas
         e o tamanho desejado para as colunas
         Deixa as colunas selecionadas com o tamanho selecionado
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     end_column_id = start_column_id + column_quantity
     request = [{
         "updateDimensionProperties": {
@@ -278,15 +290,16 @@ def change_column_size(sheet, sample_spread_sheet_id, tab_id, start_column_id, c
         }
     }]
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()
 
 
-def centralize_cells_request(tab_id , start_row , start_column_id , end_row , end_column_id):
+def centralize_cells_request(tab_id, start_row, start_column_id, end_row, end_column_id):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a linha e a ID da coluna onde começará a formatação 
         e a linha e a ID da coluna onde terminará a formatação
         Retorna um pedido para centralizar o texto dessas células
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     start_row = start_row - 1
     end_column_id = end_column_id + 1
     request = {
@@ -314,15 +327,16 @@ def centralize_cells_request(tab_id , start_row , start_column_id , end_row , en
     return request
 
 
-def centralize_cells(sheet, sample_spread_sheet_id, tab_id , start_row , start_column_id , end_row , end_column_id):
+def centralize_cells(sheet, spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a linha e a ID da coluna onde começará a formatação 
         e a linha e a ID da coluna onde terminará a formatação
         O texto dessas células será centralizado
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     request = [centralize_cells_request(tab_id, start_row, start_column_id, end_row, end_column_id)]
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()
 
 
 def bold_cells_request(tab_id, start_row, start_column_id, end_row, end_column_id):
@@ -331,6 +345,7 @@ def bold_cells_request(tab_id, start_row, start_column_id, end_row, end_column_i
         e a linha e a ID da coluna onde terminará a formatação
         Retorna um pedido para colocar em negrito o texto dessas células
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     start_row = start_row - 1
     end_column_id = end_column_id + 1
     request = {
@@ -355,15 +370,16 @@ def bold_cells_request(tab_id, start_row, start_column_id, end_row, end_column_i
     return request
 
 
-def bold_cells(sheet, sample_spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id):
+def bold_cells(sheet, spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a linha e a ID da coluna onde começará a formatação 
         e a linha e a ID da coluna onde terminará a formatação
         O texto dessas células será colocado em negrito
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     request = [bold_cells_request(tab_id, start_row, start_column_id, end_row, end_column_id)]
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()
 
 
 def external_border_request(tab_id, start_row, start_column_id, end_row, end_column_id):
@@ -372,6 +388,7 @@ def external_border_request(tab_id, start_row, start_column_id, end_row, end_col
         e a linha e a ID da coluna onde terminará a formatação
         Retorna um pedido para tornar a borda externa do grupo de células escolhido realçada
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     start_row = start_row - 1
     end_column_id = end_column_id + 1
     request = {
@@ -392,17 +409,18 @@ def external_border_request(tab_id, start_row, start_column_id, end_row, end_col
     return request
 
 
-def external_border(sheet, sample_spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id):
+def external_border(sheet, spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a linha e a ID da coluna onde começará a formatação 
         e a linha e a ID da coluna onde terminará a formatação
         A borda externa do grupo de células escolhido será realçada
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     start_row = start_row - 1
     end_column_id = end_column_id + 1
     request = [external_border_request(tab_id,start_row, start_column_id, end_row, end_column_id)]
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()
 
 
 def set_text_rotation_request(tab_id, start_row, start_column_id, end_row, end_column_id, angle):
@@ -412,6 +430,7 @@ def set_text_rotation_request(tab_id, start_row, start_column_id, end_row, end_c
         e quantos graus se deseja rotacionar o Texto das células selecionadas
         Retorna um pedido para rotacionar o Texto das células selecionadas nos graus selecionados
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     start_row = start_row - 1
     end_column_id = end_column_id + 1
     request = {
@@ -436,16 +455,17 @@ def set_text_rotation_request(tab_id, start_row, start_column_id, end_row, end_c
     return request
 
 
-def set_text_rotation(sheet, sample_spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id, angle):
+def set_text_rotation(sheet, spread_sheet_id, tab_id, start_row, start_column_id, end_row, end_column_id, angle):
     ''' Pega a ID da planilha, a ID da aba da planilha,
         a linha e a ID da coluna onde começará a formatação 
         e a linha e a ID da coluna onde terminará a formatação
         e quantos graus se deseja rotacionar o Texto das células selecionadas
         Rotaciona o Texto das células selecionadas nos graus selecionados
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     request = [set_text_rotation_request(tab_id, start_row, start_column_id, end_row, end_column_id, angle)]
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()
 
 
 def write_request(tab_id, row, column_id, text):
@@ -453,6 +473,7 @@ def write_request(tab_id, row, column_id, text):
         e o texto que se quer colocar nesta célula
         Retorna um pedido para escrever o texto na célula escolhida
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     row = row - 1
     request = {
         "updateCells": 
@@ -476,10 +497,11 @@ def write_request(tab_id, row, column_id, text):
     return request
 
 
-def user_pattern_format(sheet, sample_spread_sheet_id, tab_id, row, column_id):
+def format_user_cells(sheet, spread_sheet_id, tab_id, row, column_id):
     ''' Pega a ID da aba da planilha, a linha e a ID da coluna que se quer formatar
         Deixa no formato dos usuários, deitado em 45º e centralizado
         A ID da aba esta no final do URL, logo depois do 'gid=' '''
+
     request = [{
         "repeatCell": {
             "range":{
@@ -502,4 +524,4 @@ def user_pattern_format(sheet, sample_spread_sheet_id, tab_id, row, column_id):
         }
     }]
     body = {"requests": request}
-    sheet.batchUpdate(spreadsheetId=sample_spread_sheet_id, body=body).execute()
+    sheet.batchUpdate(spreadsheetId=spread_sheet_id, body=body).execute()

@@ -1,5 +1,0 @@
-''' Documento para lembrar o que é preciso fazer quando iniciar uma planilha nova '''
-
-1- Criar uma aba para os meta dados na planilha, como a quantidade de usuários e de questões
-2- Ajustar esses dados inicialmente, provavelmente ambos com o valor 0
-3- Ajustar a google_sheets_constants.py com os valores certos para essa nova planilha
