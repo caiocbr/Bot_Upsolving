@@ -18,7 +18,7 @@ def request_insert_rows(sheet_id, start_index, num_rows):
 
 def request_merge_columns(sheet_id, start_row, start_column, end_row, end_column):
     ''' Retorna o request que junta as linhas num grid com o canto superior esquerdo em 
-       (startRow,startColumn) e canto inferior direito em (endRow,endColumn)'''
+        (startRow, startColumn) e canto inferior direito em (endRow, endColumn)'''
     request_body = {
         "mergeCells": {
             "range": {
@@ -36,7 +36,7 @@ def request_merge_columns(sheet_id, start_row, start_column, end_row, end_column
 
 def request_merge_rows(sheet_id, start_row, start_column, end_row, end_column):
     ''' Retorna o request que junta as colunas num grid com o canto superior esquerdo em 
-       (startRow,startColumn) e canto inferior direito em (endRow,endColumn)'''
+        (startRow, startColumn) e canto inferior direito em (endRow, endColumn)'''
     request_body = {
         "mergeCells": {
             "range": {
@@ -54,7 +54,7 @@ def request_merge_rows(sheet_id, start_row, start_column, end_row, end_column):
 
 def request_centralize_cells(sheet_id, start_row, start_column, end_row, end_column):
     ''' Retorna o request que centraliza o texto num grid com o canto superior esquerdo em 
-       (startRow,startColumn) e canto inferior direito em (endRow,endColumn)'''
+        (startRow, startColumn) e canto inferior direito em (endRow, endColumn)'''
     request_body = {
         "repeatCell":
         {
@@ -82,7 +82,7 @@ def request_centralize_cells(sheet_id, start_row, start_column, end_row, end_col
 
 def request_add_hyperlink(sheet_id, row_index, column_index, name, url):
     ''' Retorna o request que adiciona um texto(name) e uma url(url) na 
-       celula (rowIndex,columnIndex)'''
+        celula (rowIndex, columnIndex)'''
     request_body = {
         "updateCells": 
         {
@@ -107,7 +107,7 @@ def request_add_hyperlink(sheet_id, row_index, column_index, name, url):
 
 
 def request_add_value(sheet_id, row_index, column_index, value):
-    ''' Retorna o request que escreve "value" na celula (rowIndex,columnIndex)'''
+    ''' Retorna o request que escreve "value" na celula (rowIndex, columnIndex)'''
     request_body = {
         "updateCells": 
         {
@@ -132,7 +132,7 @@ def request_add_value(sheet_id, row_index, column_index, value):
 
 def request_border_cell(sheet_id, start_row, start_column, end_row, end_column):
     ''' Retorna o request que realca apenas as bordas externas num grid com o canto superior 
-       esquerdo em (startRow,startColumn) e canto inferior direito em (endRow,endColumn)'''
+        esquerdo em (startRow, startColumn) e canto inferior direito em (endRow, endColumn)'''
     request_body = {
         "updateBorders": {
             "range":{
@@ -153,7 +153,7 @@ def request_border_cell(sheet_id, start_row, start_column, end_row, end_column):
 
 def request_border_all_cells(sheet_id, start_row, start_column, end_row, end_column):
     ''' Retorna o request que realca todas as bordas num grid com o canto superior esquerdo em 
-       (startRow,startColumn) e canto inferior direito em (endRow,endColumn)'''
+        (startRow, startColumn) e canto inferior direito em (endRow, endColumn)'''
     request_body = {
         "repeatCell": {
             "range":{
@@ -181,8 +181,8 @@ def request_border_all_cells(sheet_id, start_row, start_column, end_row, end_col
 
 def request_change_color(sheet_id, start_row, start_column, end_row, end_column, red, green, blue):
     ''' Retorna o request que muda a cor do texto num grid com o canto superior esquerdo em 
-       (startRow,startColumn) e canto inferior direito em (endRow,endColumn)
-       para o sistema rgb,com cada parametro variando de [0,1]'''
+        (startRow, startColumn) e canto inferior direito em (endRow, endColumn)
+        para o sistema rgb,com cada parametro variando de [0,1]'''
     request_body = {
         "repeatCell": {
             "range":{
@@ -211,8 +211,8 @@ def request_change_color(sheet_id, start_row, start_column, end_row, end_column,
 
 def request_add_condition_rule_red_blank(sheet_id, start_row, start_column, end_row, end_column):
     ''' Retorna o request que add a regra de deixar vermelho se estiver em branco 
-       num grid com o canto superior esquerdo em (startRow,startColumn) e 
-       canto inferior direito em (endRow,endColumn)'''
+        num grid com o canto superior esquerdo em (startRow, startColumn) e 
+        canto inferior direito em (endRow, endColumn)'''
     request_body = {
         "addConditionalFormatRule": {
             "rule": {
@@ -242,8 +242,8 @@ def request_add_condition_rule_red_blank(sheet_id, start_row, start_column, end_
 
 def request_add_condition_rule_green_not_blank(sheet_id, start_row, start_column, end_row, end_column):
     ''' Retorna o request que add a regra de deixar verde se nao estiver vazio num grid com 
-       o canto superior esquerdo em (startRow,startColumn) e canto inferior direito 
-       em (endRow,endColumn)'''
+        o canto superior esquerdo em (startRow, startColumn) e canto inferior direito 
+        em (endRow, endColumn)'''
     request_body = {
         "addConditionalFormatRule": {
             "rule": {
@@ -273,7 +273,7 @@ def request_add_condition_rule_green_not_blank(sheet_id, start_row, start_column
 
 def request_change_size_column(sheet_id, start_index, end_index, size):
     ''' Retorna o request que altera o tamanho das colunas comecando na posicao 
-       "startIndex" e temrinando na posicao endIndex para size'''
+        "startIndex" e temrinando na posicao endIndex para size'''
     request_body = {
         "updateDimensionProperties": {
             "range": {
@@ -293,7 +293,7 @@ def request_change_size_column(sheet_id, start_index, end_index, size):
 
 def request_change_size_row(sheet_id, start_index, end_index, size):
     ''' Retorna o request que altera o tamanho das linhas comecando na posicao "startIndex" 
-       e temrinando na posicao endIndex para size'''
+        e temrinando na posicao endIndex para size'''
     request_body = {
         "updateDimensionProperties": {
             "range": {
@@ -313,8 +313,8 @@ def request_change_size_row(sheet_id, start_index, end_index, size):
 
 def request_bold_cells(sheet_id, start_row, start_column, end_row, end_column):
     ''' Retorna o request que altera o texto para ficar em negrito num grid com o 
-       canto superior esquerdo em (startRow,startColumn) e canto inferior direito 
-       em (endRow,endColumn)'''
+        canto superior esquerdo em (startRow, startColumn) e canto inferior direito 
+        em (endRow, endColumn)'''
     request_body = {
         "repeatCell": {
             "range":{
@@ -339,7 +339,7 @@ def request_bold_cells(sheet_id, start_row, start_column, end_row, end_column):
 
 def request_add_formula_value(sheet_id, row_index, column_index, value):
     ''' Retorna o request que adiciona uma formula na celula de posicao 
-       (rowIndex,columnIndex) com o valor "value"'''
+        (rowIndex, columnIndex) com o valor "value"'''
     request_body = {
         "updateCells": 
         {
