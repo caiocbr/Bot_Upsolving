@@ -10,7 +10,7 @@ def insert_rows_request(tab_id, start_index, rows_quantity):
                 "sheetId": tab_id ,
                 "dimension": "ROWS",
                 "startIndex": start_index,
-                "endIndex": rows_quantity
+                "endIndex": start_index+rows_quantity
             }
         }
     }
