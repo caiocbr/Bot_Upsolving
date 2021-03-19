@@ -1,7 +1,7 @@
 from google_sheets_constants import *
 from Auth import *
 
-def insert_rows_request(tab_id, start_index, rows_quantity):
+def insert_rows_request(tab_id, start_row, rows_quantity):
     ''' Pega o ID da tabela, a linha de inicio e a quantidade de linhas a serem inseridas
         Retorna o request que insere uma "num" linhas na linha de numero "start_index"'''
     request_body = {
@@ -9,7 +9,7 @@ def insert_rows_request(tab_id, start_index, rows_quantity):
             "range": {
                 "sheetId": tab_id ,
                 "dimension": "ROWS",
-                "startIndex": start_index,
+                "startIndex": start_row,
                 "endIndex": start_index+rows_quantity
             }
         }
