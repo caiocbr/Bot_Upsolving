@@ -1,4 +1,392 @@
-from google_sheets_constants import*
+from google_sheets_constants import *
+from Auth import *
+
+def insert_rows_request(tab_id, start_row, rows_quantity):
+    ''' Pega o ID da tabela, a linha de inicio e a quantidade de linhas a serem inseridas
+        Retorna o request que insere uma "num" linhas na linha de numero "start_index"'''
+    request_body = {
+        "insertDimension": {
+            "range": {
+                "sheetId": tab_id ,
+                "dimension": "ROWS",
+                "startIndex": start_row,
+                "endIndex": start_index+rows_quantity
+            }
+        }
+    }
+    return request_body
+
+
+def merge_columns_request(tab_id, start_row, start_column, end_row, end_column):
+    ''' Pega o ID da tabela e o range de aplicacao da funcao
+        Retorna o request que junta as linhas num grid com o canto superior esquerdo em 
+        (start_row, start_column) e canto inferior direito em (end_row-1, end_column-1)'''
+    request_body = {
+        "mergeCells": {
+            "range": {
+                "sheetId": tab_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_column,
+                "endColumnIndex": end_column
+            },
+            "mergeType": "MERGE_COLUMNS"
+        }
+    }
+    return request_body
+
+
+def merge_rows_request(tab_id, start_row, start_column, end_row, end_column):
+    ''' Pega o ID da tabela e o range de aplicacao da funcao
+        Retorna o request que junta as colunas num grid com o canto superior esquerdo em 
+        (start_row, start_column) e canto inferior direito em (end_row-1, end_column-1)'''
+    request_body = {
+        "mergeCells": {
+            "range": {
+                "sheetId": tab_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_column,
+                "endColumnIndex": end_column
+            },
+            "mergeType": "MERGE_ROWS"
+        }
+    }
+    return request_body
+
+
+def centralize_cells_request(tab_id, start_row, start_column, end_row, end_column):
+    ''' Pega o ID da tabela e o range de aplicacao da funcao
+        Retorna o request que centraliza o texto num grid com o canto superior esquerdo em 
+        (start_row, start_column) e canto inferior direito em (end_row-1, end_column-1)'''
+    request_body = {
+        "repeatCell":
+        {
+            "cell":
+            {
+                "userEnteredFormat":
+                {
+                    "horizontalAlignment": "CENTER" ,   
+                    "verticalAlignment": "MIDDLE" 
+                }
+            },
+            "range":
+            {
+                "sheetId": tab_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_column,
+                "endColumnIndex": end_column
+            },
+            "fields": "userEnteredFormat"
+        }
+    }
+    return request_body
+
+
+def add_hyperlink_request(tab_id, row_index, column_index, name, url):
+    ''' Pega o ID da tabela, a posicao da celula e o nome e a url a ser inserido 
+        Retorna o request que adiciona um texto(name) e uma url(url) na 
+        celula (row_index, column_index)'''
+    request_body = {
+        "updateCells": 
+        {
+            "rows": 
+            {
+                "values": {
+                    "userEnteredValue": {
+                        "formulaValue":'=HYPERLINK("{}";"{}")'.format(url,name)
+                    }
+                }
+            }
+            ,
+                "fields": "userEnteredValue",
+                "start": {
+                    "sheetId": tab_id,
+                    "rowIndex": row_index,
+                    "columnIndex": column_index
+                }
+        }
+    }
+    return request_body
+
+
+def add_value_request(tab_id, row_index, column_index, value):
+    ''' Pega o ID da tabela, a posicao da celula e o valor a ser escrito 
+        Retorna o request que escreve "value" na celula (row_index, column_index)'''
+    request_body = {
+        "updateCells": 
+        {
+            "rows": 
+            {
+                "values": {
+                    "userEnteredValue": {
+                        "stringValue": value
+                    }
+                }
+            },
+            "fields": "userEnteredValue",
+            "start": {
+                "sheetId": tab_id,
+                "rowIndex": row_index,
+                "columnIndex": column_index 
+            }
+        }
+    }
+    return request_body
+
+
+def border_cell_request(tab_id, start_row, start_column, end_row, end_column):
+    ''' Pega o ID da tabela e o range de aplicacao da funcao
+        Retorna o request que realca apenas as bordas externas num grid com o canto superior 
+        esquerdo em (start_row, start_column) e canto inferior direito em 
+        (end_row-1, end_column-1)'''
+    request_body = {
+        "updateBorders": {
+            "range":{
+                "sheetId": tab_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_column,
+                "endColumnIndex": end_column
+            },
+            "top": {"style":"SOLID"},
+            "bottom": {"style":"SOLID"},
+            "left": {"style":"SOLID"},
+            "right": {"style":"SOLID"}
+        }
+    }
+    return request_body
+
+
+def border_all_cells_request(tab_id, start_row, start_column, end_row, end_column):
+    ''' Pega o ID da tabela e o range de aplicacao da funcao
+        Retorna o request que realca todas as bordas num grid com o canto superior esquerdo em 
+        (start_row, start_column) e canto inferior direito em (end_row-1, end_column-1)'''
+    request_body = {
+        "repeatCell": {
+            "range":{
+                "sheetId": tab_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_column,
+                "endColumnIndex": end_column
+            },
+            "cell": {
+                "userEnteredFormat": {
+                    "borders": {
+                        "top": {"style":"SOLID"},
+                        "bottom": {"style":"SOLID"},
+                        "left": {"style":"SOLID"},
+                        "right": {"style":"SOLID"}
+                    }
+                }
+            },
+            "fields": "userEnteredFormat.borders"
+        }
+    }
+    return request_body
+
+
+def change_color_request(tab_id, start_row, start_column, end_row, end_column, red, green, blue):
+    ''' Pega o ID da tabela, o range de aplicacao da funcao e as cores RGB
+        Retorna o request que muda a cor do texto num grid com o canto superior esquerdo em 
+        (start_row, start_column) e canto inferior direito em (end_row-1, end_column-1)
+        para o sistema rgb,com cada parametro variando de [0,1]'''
+    request_body = {
+        "repeatCell": {
+            "range":{
+                "sheetId": tab_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_column,
+                "endColumnIndex": end_column
+            },
+            "cell": {
+                "userEnteredFormat": {
+                    "textFormat": {
+                        "foregroundColor": {
+                            "red": red,
+                            "green": green,
+                            "blue": blue
+                        }
+                    }
+                }
+            },
+            "fields": "userEnteredFormat.textFormat"
+        }
+    }
+    return request_body
+
+
+def add_condition_rule_red_blank_request(tab_id, start_row, start_column, end_row, end_column):
+    ''' Pega o ID da tabela e o range de aplicacao da funcao
+        Retorna o request que add a regra de deixar vermelho se estiver em branco 
+        num grid com o canto superior esquerdo em (start_row, start_column) e 
+        canto inferior direito em (end_row-1, end_column-1)'''
+    request_body = {
+        "addConditionalFormatRule": {
+            "rule": {
+                "ranges":{
+                    "sheetId": tab_id,
+                    "startRowIndex": start_row,
+                    "endRowIndex": end_row,
+                    "startColumnIndex": start_column,
+                    "endColumnIndex": end_column
+                },
+                "booleanRule": {
+                    "condition": {"type": "BLANK"},
+                    "format": {
+                        "backgroundColor": {
+                            "red": 1, 
+                            "blue": 0.8,
+                            "green": 0.8
+                        }
+                    }
+                }
+            },
+            "index": 0
+        }
+    }
+    return request_body
+
+
+def add_condition_rule_green_not_blank_request(tab_id, start_row, start_column, end_row, end_column):
+    ''' Pega o ID da tabela e o range de aplicacao da funcao
+        Retorna o request que add a regra de deixar verde se nao estiver vazio num grid com 
+        o canto superior esquerdo em (start_row, start_column) e canto inferior direito 
+        em (end_row-1, end_column-1)'''
+    request_body = {
+        "addConditionalFormatRule": {
+            "rule": {
+                "ranges":{
+                    "sheetId": tab_id,
+                    "startRowIndex": start_row,
+                    "endRowIndex": end_row,
+                    "startColumnIndex": start_column,
+                    "endColumnIndex": end_column
+                },
+                "booleanRule": {
+                    "condition": {"type": "NOT_BLANK"},
+                    "format": {
+                        "backgroundColor": {
+                            "red": 0.8,
+                            "blue": 0.8,
+                            "green": 1
+                        }
+                    }
+                }
+            },
+            "index": 0
+        }
+    }
+    return request_body
+
+
+def change_size_column_request(tab_id, start_index, end_index, size):
+    ''' Pega o ID da tabela, a linha de inicio e de fim e o tamanho da coluna desejado 
+        Retorna o request que altera o tamanho das colunas comecando na posicao 
+        "start_index" e temrinando na posicao end_index para size'''
+    request_body = {
+        "updateDimensionProperties": {
+            "range": {
+                "sheetId": tab_id,
+                "dimension": "COLUMNS",
+                "startIndex": start_index,
+                "endIndex": end_index
+            },
+            "properties": {
+                "pixelSize": size
+            },
+            "fields": "pixelSize"
+        }
+    }
+    return request_body
+
+
+def change_size_row_request(tab_id, start_index, end_index, size):
+    ''' Pega o ID da tabela, a coluna de inicio e de fim e o tamanho da linha desjado
+        Retorna o request que altera o tamanho das linhas comecando na posicao "start_index" 
+        e temrinando na posicao end_index para size'''
+    request_body = {
+        "updateDimensionProperties": {
+            "range": {
+                "sheetId": tab_id,
+                "dimension": "ROWS",
+                "startIndex": start_index,
+                "endIndex": end_index
+            },
+            "properties": {
+                "pixelSize": size
+            },
+            "fields": "pixelSize"
+        }
+    }
+    return request_body
+
+
+def bold_cells_request(tab_id, start_row, start_column, end_row, end_column):
+    ''' Pega o ID da tabela e o range de aplicacao da funcao
+        Retorna o request que altera o texto para ficar em negrito num grid com o 
+        canto superior esquerdo em (start_row, start_column) e canto inferior direito 
+        em (end_row-1, end_column-1)'''
+    request_body = {
+        "repeatCell": {
+            "range":{
+                "sheetId": tab_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_column,
+                "endColumnIndex": end_column
+            },
+            "cell": {
+                "userEnteredFormat": {
+                    "textFormat": {
+                        "bold" : True
+                    }
+                }
+            },
+            "fields": "userEnteredFormat.textFormat"
+        }
+    }
+    return request_body
+
+
+def add_formula_value_request(tab_id, row_index, column_index, value):
+    ''' Pega o ID da tabela, a posicao da celula e o valor a ser escrito
+        Retorna o request que adiciona uma formula na celula de posicao 
+        (row_index, column_index) com o valor "value"'''
+    request_body = {
+        "updateCells": 
+        {
+            "rows": 
+            {
+                "values": {
+                    "userEnteredValue" : {
+                        "formulaValue" : value
+                    }
+                }
+            },
+            "fields": "userEnteredValue",
+            "start": {
+                "sheetId": tab_id,
+                "rowIndex": row_index,
+                "columnIndex": column_index 
+            }
+        }
+    }
+    return request_body
+
+
+def get_formula(spreadsheet, name_tab, row_index, column_index):
+    ''' Pega a spreadsheet, o nome da tabela e a posicao da celula
+        Retorna a formula da celula de posicao (row_index,column_index)'''
+    result = spreadsheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range= name_tab + 
+            chr(65+column_index) + str(row_index) + ":"+ chr(65+column_index) + 
+            str(row_index),valueRenderOption = "FORMULA").execute()
+    values = result.get('values', [])
+    return values[0][0]
+
 
 def int_to_column(id):
     ''' Pega uma ID de coluna (começando por 0)
